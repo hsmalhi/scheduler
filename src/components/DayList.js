@@ -2,19 +2,16 @@ import React from "react";
 
 import DayListItem from "./DayListItem";
 
-// import classNames from "classnames";
-
 export default function DayList(props) {
   const dayListItem = function(day, setDay) {
     return (<DayListItem
+      key={day.id}
       name={day.name}
       spots={day.spots}
       selected={day.name === props.day}
       setDay={setDay}
     />);
   };
-
-  // let dayListClass = classNames("day-list", {});
 
   return (
     <ul>
