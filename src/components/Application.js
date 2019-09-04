@@ -10,6 +10,7 @@ import {
   getInterview,
   getInterviewersForDay
 } from "helpers/selectors";
+import { throws } from "assert";
 
 export default function Application(props) {
   const [state, setState] = useState({
@@ -58,7 +59,9 @@ export default function Application(props) {
 
         setState({ ...state, appointments });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        throw error
+      });
   }
 
   function cancelInterview(id) {
@@ -78,7 +81,9 @@ export default function Application(props) {
 
         setState({ ...state, appointments });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        throw error
+      });
   }
 
   return (
