@@ -11,7 +11,6 @@ import Error from "components/Appointment/Error";
 import Confirm from "components/Appointment/Confirm";
 
 import useVisualHook from "hooks/useVisualMode";
-import { action } from "@storybook/addon-actions/dist/preview";
 
 export default function Appointment(props) {
   const EMPTY = "EMPTY";
