@@ -5,7 +5,11 @@ import "components/Application.scss";
 
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
-import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors"
+import {
+  getAppointmentsForDay,
+  getInterview,
+  getInterviewersForDay
+} from "helpers/selectors";
 
 export default function Application(props) {
   const [state, setState] = useState({
@@ -24,13 +28,32 @@ export default function Application(props) {
 
     Promise.all([getDays, getAppointments, getInterviewers])
       .then(response => {
-        setState(prev => ({...prev, days: response[0].data, appointments: response[1].data, interviewers: response[2].data}))
+        setState(prev => ({
+          ...prev,
+          days: response[0].data,
+          appointments: response[1].data,
+          interviewers: response[2].data
+        }));
       })
       .catch(error => console.log(error));
   }, []);
 
   const daysAppointments = getAppointmentsForDay(state, state.day);
   const daysInterviews = getInterviewersForDay(state, state.day);
+
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    setState({ ...state, appointments });
+  }
 
   return (
     <main className="layout">
@@ -52,7 +75,13 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         {daysAppointments.map(appointment => (
-          <Appointment key={appointment.id} {...appointment} interview={getInterview(state, appointment.interview)} interviewers={daysInterviews}/>
+          <Appointment
+            key={appointment.id}
+            {...appointment}
+            interview={getInterview(state, appointment.interview)}
+            interviewers={daysInterviews}
+            bookInterview={bookInterview}
+          />
         ))}
         <Appointment key="last" time="5pm" />
       </section>
