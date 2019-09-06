@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
+require("dotenv").config();
 
 const SET_DAY = "SET_DAY";
 const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
@@ -98,6 +99,22 @@ export default function useApplicationData() {
       .catch(error => {
         throw error;
       });
+
+    const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    
+    webSocket.onopen = function (event) {
+      console.log("Began listening for updates from the scheduler-api server.")
+    };
+
+    webSocket.onmessage = function (event) {
+      event = JSON.parse(event.data);
+  
+      if (event.type === SET_INTERVIEW) {
+        dispatch({ ...event });
+      } else {
+        console.log("Event details came from the server but were never handled:", event);
+      }
+    }
   }, []);
 
   const setDay = day => dispatch({ type: SET_DAY, day });
