@@ -1,15 +1,64 @@
-import { useState, useEffect } from "react";
+import { useEffect, useReducer } from "react";
 import axios from "axios";
 
 export default function useApplicationData() {
-  const [state, setState] = useState({
+  const SET_DAY = "SET_DAY";
+  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+  const SET_INTERVIEW = "SET_INTERVIEW";
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case SET_DAY: {
+        return { ...state, day: action.value.day };
+      }
+      case SET_APPLICATION_DATA: {
+        return {
+          ...state,
+          days: action.value.days,
+          appointments: action.value.appointments,
+          interviewers: action.value.interviewers
+        };
+      }
+      case SET_INTERVIEW: {
+        if (action.value.interview) {
+          const appointment = {
+            ...state.appointments[action.value.id],
+            interview: { ...action.value.interview }
+          };
+
+          const appointments = {
+            ...state.appointments,
+            [action.value.id]: appointment
+          };
+
+          return { ...state, appointments };
+        } else {
+          const appointment = {
+            ...state.appointments[action.value.id],
+            interview: null
+          };
+
+          const appointments = {
+            ...state.appointments,
+            [action.value.id]: appointment
+          };
+
+          return { ...state, appointments };
+        }
+      }
+      default:
+        throw new Error(
+          `Tried to reduce with unsupported action type: ${action.type}`
+        );
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {}
   });
-
-  const setDay = day => setState({ ...state, day });
 
   useEffect(() => {
     const getDays = axios.get("/api/days");
@@ -18,59 +67,47 @@ export default function useApplicationData() {
 
     Promise.all([getDays, getAppointments, getInterviewers])
       .then(response => {
-        setState(prev => ({
-          ...prev,
-          days: response[0].data,
-          appointments: response[1].data,
-          interviewers: response[2].data
-        }));
-      })
-      .catch(error => console.log(error));
-  }, []);
-
-  function bookInterview(id, interview) {
-    const putInterview = axios.put(`/api/appointments/${id}`, { interview });
-
-    return Promise.all([putInterview])
-      .then(() => {
-        const appointment = {
-          ...state.appointments[id],
-          interview: { ...interview }
-        };
-
-        const appointments = {
-          ...state.appointments,
-          [id]: appointment
-        };
-
-        setState({ ...state, appointments });
+        dispatch({
+          type: "SET_APPLICATION_DATA",
+          value: {
+            days: response[0].data,
+            appointments: response[1].data,
+            interviewers: response[2].data
+          }
+        });
       })
       .catch(error => {
         throw error;
       });
-  }
+  }, []);
 
-  function cancelInterview(id) {
+  const setDay = day => dispatch({ type: SET_DAY, value: { day } });
+
+  const bookInterview = function(id, interview) {
+    const putInterview = axios.put(`/api/appointments/${id}`, {
+      interview: interview
+    });
+
+    return Promise.all([putInterview])
+      .then(() => {
+        dispatch({ type: SET_INTERVIEW, value: { id, interview } });
+      })
+      .catch(error => {
+        throw error;
+      });
+  };
+
+  const cancelInterview = function(id) {
     const deleteInterview = axios.delete(`/api/appointments/${id}`);
 
     return Promise.all([deleteInterview])
       .then(() => {
-        const appointment = {
-          ...state.appointments[id],
-          interview: null
-        };
-
-        const appointments = {
-          ...state.appointments,
-          [id]: appointment
-        };
-
-        setState({ ...state, appointments });
+        dispatch({ type: SET_INTERVIEW, value: { id } });
       })
       .catch(error => {
         throw error;
       });
-  }
+  };
 
   return { state, setDay, bookInterview, cancelInterview };
 }
