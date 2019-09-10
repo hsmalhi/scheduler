@@ -14,10 +14,10 @@ const updateSpots = function(state, decrease) {
 
     return {
       ...day,
-      spots: (decrease ? day.spots-- : day.spots++)
+      spots: decrease ? day.spots-- : day.spots++
     };
   });
-}
+};
 
 function reducer(state, action) {
   switch (action.type) {
@@ -33,38 +33,25 @@ function reducer(state, action) {
       };
     }
     case SET_INTERVIEW: {
-      if (action.interview) {
-        const appointment = {
-          ...state.appointments[action.id],
-          interview: { ...action.interview }
-        };
+      const appointment = {
+        ...state.appointments[action.id],
+        interview: action.interview ? { ...action.interview } : null
+      };
 
-        const appointments = {
-          ...state.appointments,
-          [action.id]: appointment
-        };
+      const appointments = {
+        ...state.appointments,
+        [action.id]: appointment
+      };
 
-        let days = state.days;
-
-        if (!state.appointments[action.id].interview) {
-          days = updateSpots(state, true);
-        }
-
-        return { ...state, ...days, appointments };
-      } else {
-        const appointment = {
-          ...state.appointments[action.id],
-          interview: null
-        };
-
-        const appointments = {
-          ...state.appointments,
-          [action.id]: appointment
-        };
-
-        const days = updateSpots(state, false);
-        return { ...state, ...days, appointments };
+      let days = state.days;
+      
+      if (action.interview && !state.appointments[action.id].interview) {
+        days = updateSpots(state, true);
+      } else if (!action.interview && state.appointments[action.id].interview) {
+        days = updateSpots(state, false);
       }
+
+      return { ...state, ...days, appointments };
     }
     default:
       throw new Error(
@@ -74,7 +61,6 @@ function reducer(state, action) {
 }
 
 export default function useApplicationData() {
-  
   const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
@@ -101,20 +87,24 @@ export default function useApplicationData() {
       });
 
     const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    
-    webSocket.onopen = function (event) {
-      console.log("Began listening for updates from the scheduler-api server.")
+
+    webSocket.onopen = function(event) {
+      console.log("Began listening for updates from the scheduler-api server.");
     };
 
-    webSocket.onmessage = function (event) {
+    webSocket.onmessage = function(event) {
       event = JSON.parse(event.data);
-  
+
       if (event.type === SET_INTERVIEW) {
+        console.log({...event});
         dispatch({ ...event });
       } else {
-        console.log("Event details came from the server but were never handled:", event);
+        console.log(
+          "Event details came from the server but were never handled:",
+          event
+        );
       }
-    }
+    };
   }, []);
 
   const setDay = day => dispatch({ type: SET_DAY, day });
