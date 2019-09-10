@@ -1,64 +1,12 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
+import reducer, {
+  SET_DAY,
+  SET_APPLICATION_DATA,
+  SET_INTERVIEW
+} from "reducers/application";
+
 require("dotenv").config();
-
-const SET_DAY = "SET_DAY";
-const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-const SET_INTERVIEW = "SET_INTERVIEW";
-
-const updateSpots = function(state, decrease) {
-  return state.days.map(day => {
-    if (day.name !== state.day) {
-      return day;
-    }
-
-    return {
-      ...day,
-      spots: decrease ? day.spots-- : day.spots++
-    };
-  });
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case SET_DAY: {
-      return { ...state, day: action.day };
-    }
-    case SET_APPLICATION_DATA: {
-      return {
-        ...state,
-        days: action.days,
-        appointments: action.appointments,
-        interviewers: action.interviewers
-      };
-    }
-    case SET_INTERVIEW: {
-      const appointment = {
-        ...state.appointments[action.id],
-        interview: action.interview ? { ...action.interview } : null
-      };
-
-      const appointments = {
-        ...state.appointments,
-        [action.id]: appointment
-      };
-
-      let days = state.days;
-      
-      if (action.interview && !state.appointments[action.id].interview) {
-        days = updateSpots(state, true);
-      } else if (!action.interview && state.appointments[action.id].interview) {
-        days = updateSpots(state, false);
-      }
-
-      return { ...state, ...days, appointments };
-    }
-    default:
-      throw new Error(
-        `Tried to reduce with unsupported action type: ${action.type}`
-      );
-  }
-}
 
 export default function useApplicationData() {
   const [state, dispatch] = useReducer(reducer, {
@@ -76,7 +24,7 @@ export default function useApplicationData() {
     Promise.all([getDays, getAppointments, getInterviewers])
       .then(response => {
         dispatch({
-          type: "SET_APPLICATION_DATA",
+          type: SET_APPLICATION_DATA,
           days: response[0].data,
           appointments: response[1].data,
           interviewers: response[2].data
