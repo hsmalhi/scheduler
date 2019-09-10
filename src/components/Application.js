@@ -48,8 +48,12 @@ export default function Application(props) {
             {...appointment}
             interview={getInterview(state, appointment.interview)}
             interviewers={daysInterviews}
-            bookInterview={bookInterview}
-            cancelInterview={cancelInterview}
+            bookInterview={(id, interview) => bookInterview(id, interview).catch(err => {
+              throw err
+            })}
+            cancelInterview={id => cancelInterview(id).catch(err => {
+              throw err
+            })}
           />
         ))}
         <Appointment key="last" time="5pm" />

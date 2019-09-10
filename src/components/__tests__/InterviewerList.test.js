@@ -7,5 +7,5 @@ import InterviewerList from "components/InterviewerListItem";
 afterEach(cleanup);
 
 it("renders without crashing", () => {
-  render(<InterviewerList />);
+  render(<InterviewerList value="Hello"/>);
 });
