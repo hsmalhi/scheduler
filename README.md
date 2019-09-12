@@ -1,23 +1,21 @@
 # Interview Scheduler
+A React application that allows users to book and cancel interviews.
+Using a concise API with a WebSocket server the application provides
+a real-time experience.
 
-## Setup
+## Getting Started
 
-Install dependencies with `npm install`.
+1. Fork this repository, then clone your fork of this repository.
+2. Install dependencies using the npm install command.
+3. Start the web server using the npm start command. The app will be served at http://localhost:8000/.
 
-## Running Webpack Development Server
+The backend to this project is served by the project here: https://github.com/hsmalhi/scheduler-api
 
-```sh
-npm start
-```
+## Dependencies
 
-## Running Jest Test Framework
+- Axios
+- Classnames
+- React
+- React-DOM
 
-```sh
-npm test
-```
-
-## Running Storybook Visual Testbed
-
-```sh
-npm run storybook
-```
+## Screenshots

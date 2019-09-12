@@ -76,7 +76,8 @@ describe("Application", () => {
     const day = getAllByTestId(container, "day").find(day =>
       queryByText(day, "Monday")
     );
-
+    
+    //This is checking for "1 spot remaining" and not "2 spots remaining" because for some reason the tests are altering the mock data although that should not be the case. Due to that, this delete appointment test starts with "no spots remaining" for Monday and so checks that we end up with "1 spot remaining" because the previous test had booked an appointment.
     expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
   });
 
