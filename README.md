@@ -19,3 +19,5 @@ The backend to this project is served by the project here: https://github.com/hs
 - React-DOM
 
 ## Screenshots
+
+![Application Demo] (https://github.com/hsmalhi/scheduler/blob/master/docs/Demo.gif?raw=true)
