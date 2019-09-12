@@ -20,4 +20,4 @@ The backend to this project is served by the project here: https://github.com/hs
 
 ## Screenshots
 
-!["Application Demo"] (https://github.com/hsmalhi/scheduler/blob/master/docs/Demo.gif?raw=true)
+!["Application Demo"] (https://github.com/hsmalhi/scheduler/blob/master/docs/Demo.gif)
