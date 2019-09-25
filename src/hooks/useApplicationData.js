@@ -17,6 +17,7 @@ export default function useApplicationData() {
   });
 
   useEffect(() => {
+    console.log(axios.defaults.baseURL)
     const getDays = axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/days`);
     const getAppointments = axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/appointments`);
     const getInterviewers = axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/interviewers`);
