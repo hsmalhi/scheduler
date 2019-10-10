@@ -20,4 +20,4 @@ The backend to this project is served by the project here: https://github.com/hs
 
 ## Screenshots
 
-![Scheduler Demo] (https://media.giphy.com/media/ibAgIvmVrJ2Nsuly4H/giphy.gif)
+![Scheduler Demo](https://media.giphy.com/media/ibAgIvmVrJ2Nsuly4H/giphy.gif)
